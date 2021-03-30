@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
-* Студент: [Кирилл Подлужный](https://up.htmlacademy.ru/ecmascript/14/user/232352).
-* Наставник: `Неизвестно`.
+- Студент: [Кирилл Подлужный](https://up.htmlacademy.ru/ecmascript/14/user/232352).
+- Наставник: [Жора Милевский](https://htmlacademy.ru/profile/id366911).
 
 ---
 
