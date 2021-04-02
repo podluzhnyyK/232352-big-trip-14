@@ -6,7 +6,7 @@ import {createSiteSortingTemplate} from './view/sorting.js';
 import {createSiteFormCreationTemplate} from './view/form-creation.js';
 import {createSiteEditFormTemplate} from './view/edit-form.js';
 import {createSiteWaypointTemplate} from './view/waypoint.js';
-import {createSiteNavigationTemplate} from './view/navigation.js';
+import {createSiteInfoAboutTripTemplate} from './view/info-about-trip.js';
 import {createSiteListTemplate} from './view/list.js';
 
 const TASK_COUNT = 3;
@@ -30,7 +30,7 @@ const siteHeaderElement = document.querySelector('.page-header');
 const siteHeaderTripMainElement = siteHeaderElement.querySelector('.trip-main');
 render(siteHeaderTripMainElement, createSiteInfoTemplate(), position.AFTER_BEGIN);
 const siteHeaderInfoElement = siteHeaderElement.querySelector('.trip-info');
-render(siteHeaderInfoElement, createSiteNavigationTemplate(), position.AFTER_BEGIN);
+render(siteHeaderInfoElement, createSiteInfoAboutTripTemplate(), position.AFTER_BEGIN);
 render(siteHeaderInfoElement, createSiteCostTemplate());
 
 // Добавляем меню
@@ -58,4 +58,5 @@ for (let i = 0; i < TASK_COUNT; i++) {
 }
 
 // Добавляем форму редактирования в начало списка
+render(siteMainPointListElement, createSiteFormCreationTemplate(), position.AFTER_BEGIN);
 render(siteMainPointListElement, createSiteEditFormTemplate(), position.AFTER_BEGIN);
