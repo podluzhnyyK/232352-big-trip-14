@@ -1,109 +1,145 @@
-import {getRandomInteger} from './utils.js';
-import {generateOptions} from './options.js';
 import dayjs from 'dayjs';
 
+// Служебные функции
+const getRandomInteger = (a = 0, b = 1) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+
+  return Math.floor(lower + Math.random() * (upper - lower + 1));
+};
+
+const shuffleArray = (arr) => {
+  const shuffledArray = arr.slice();
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+};
+
+const getRandomTimeGap = () => {
+  return getRandomInteger(30, 360);
+};
+
+// Функции по генерации данных
+
 const generateType = () => {
-  const types = [
-    'Taxi',
-    'Bus',
-    'Train',
-    'Ship',
-    'Transport',
-    'Drive',
-    'Flight',
-    'Check-in',
-    'Sightseeing',
-    'Restaurant',
-  ];
-  const randomIndex = getRandomInteger(0, types.length - 1);
-  return types[randomIndex];
+  const EVENTS_TYPE = ['Taxi', 'Bus', 'Train', 'Ship', 'Transport', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+
+  const randomIndex = getRandomInteger(0, EVENTS_TYPE.length - 1);
+  return EVENTS_TYPE[randomIndex];
 };
 
 const generateDestination = () => {
-  const cities = [
-    'Moscow',
-    'Vladimir',
-    'Smolensk',
-    'Saratov',
-  ];
-  const randomIndex = getRandomInteger(0, cities.length - 1);
-  return cities[randomIndex];
+  const PLACES_OF_DESTINATION = ['Amsterdam', 'Geneva', 'Chamonix', 'Köln'];
+
+  const randomIndex = getRandomInteger(0, PLACES_OF_DESTINATION.length - 1);
+  return PLACES_OF_DESTINATION[randomIndex];
 };
 
 const generateDescription = () => {
-  const DESCRIPTION_LENGTH = getRandomInteger(1, 5);
+  const DESCRIPTION_TEXT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
+  const SENTENCES_MIN_AMOUNT = 1;
+  const SENTENCES_MAX_AMOUNT = 5;
 
-  const sentences = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    'Cras aliquet varius magna, non porta ligula feugiat eget.',
-    'Fusce tristique felis at fermentum pharetra.',
-    'Aliquam id orci ut lectus varius viverra.',
-    'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-    'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
-    'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-    'Sed sed nisi sed augue convallis suscipit in sed felis.',
-    'Aliquam erat volutpat.',
-    'Nunc fermentum tortor ac porta dapibus.',
-    'In rutrum ac purus sit amet tempus.',
+  const descriptionSentences = DESCRIPTION_TEXT.split('. ');
+  const amountOfSentences = getRandomInteger(SENTENCES_MIN_AMOUNT, SENTENCES_MAX_AMOUNT);
+  const description = shuffleArray(descriptionSentences).slice(0, amountOfSentences).join('. ') + '.';
+  return description;
+};
+
+const generatePhotos = () => {
+  const amountOfPhotos = getRandomInteger(1, 4);
+  const photosArray = new Array(amountOfPhotos);
+
+  for (let i = 0; i < photosArray.length; i++) {
+    photosArray[i] = `http://picsum.photos/248/152?r=${Math.random()}`;
+  }
+
+  return photosArray;
+};
+
+const generateEventCost = () => {
+  const cost = getRandomInteger(5, 700);
+  return cost;
+};
+
+const generateOffers = () => {
+  const offers = [
+    {
+      'id': 'luggage',
+      'title': 'Add luggage',
+      'offerCost': 30,
+      'isChecked': Boolean(getRandomInteger(0, 1)),
+    },
+    {
+      'id': 'comfort',
+      'title': 'Switch to comfort',
+      'offerCost': 100,
+      'isChecked': Boolean(getRandomInteger(0, 1)),
+    },
+    {
+      'id': 'meal',
+      'title': 'Add a meal',
+      'offerCost': 15,
+      'isChecked': Boolean(getRandomInteger(0, 1)),
+    },
+    {
+      'id': 'seats',
+      'title': 'Chose seats',
+      'offerCost': 5,
+      'isChecked': Boolean(getRandomInteger(0, 1)),
+    },
+    {
+      'id': 'train',
+      'title': 'Travel by train',
+      'offerCost': 40,
+      'isChecked': Boolean(getRandomInteger(0, 1)),
+    },
   ];
 
-  const description = new Set();
-
-  for (let i = 0; i < DESCRIPTION_LENGTH; i++) {
-    description.add(sentences[getRandomInteger(0, sentences.length - 1)]);
-  }
-
-  return `${[...description]}`;
+  return offers;
 };
 
-const generateImages = () => {
-  const IMAGES_QUANTITY = getRandomInteger(1, 3);
-
-  const imgLinks = [];
-  for (let i = 0; i < IMAGES_QUANTITY; i++) {
-    imgLinks.push(`http://picsum.photos/248/152?r=${Math.random()}`);
-  }
-
-  return imgLinks;
+const randomizeFavouriteFlag = () => {
+  return Boolean(getRandomInteger(0, 1));
 };
 
-const generateDates = () => {
-  const DAYS_TO_START = getRandomInteger(1, 6);
-  const MAX_TRIP_DURATION_IN_MINUTES = 4320;
-  const pointDuration = getRandomInteger(15, MAX_TRIP_DURATION_IN_MINUTES);
-
-  const start = dayjs().add(DAYS_TO_START, 'day').toDate();
-  const end = dayjs(start).add(pointDuration, 'minute').toDate();
-
-  return {
-    start,
-    end,
-  };
+const getEventStartTime = () => {
+  const gap = 72;
+  const gapInHours = getRandomInteger(-gap, gap);
+  return dayjs().add(gapInHours, 'hour').toDate();
 };
 
-const generatePrice = () => {
-  const price = getRandomInteger(10, 500);
-  return price;
+const getEventEndTime = (startTime, duration) => {
+  return dayjs(startTime).add(duration, 'minute').toDate();
 };
 
-export const generatePoint = () => {
+// Генерация точки маршрута
+
+export const generateTripEventsItem = () => {
+
   const type = generateType();
   const destination = generateDestination();
-  const options = generateOptions();
   const description = generateDescription();
-  const images = generateImages();
-  const date = generateDates();
-  const price = generatePrice();
-  const isFavourite = Boolean(getRandomInteger(0, 1));
+  const photos = generatePhotos();
+  const eventStartTime = getEventStartTime();
+  const duration = getRandomTimeGap();
+  const eventEndTime = getEventEndTime(eventStartTime, duration);
+  const cost = generateEventCost();
+  const offers = generateOffers();
+  const isFavourite = randomizeFavouriteFlag();
 
   return {
     type,
     destination,
-    options,
     description,
-    images,
-    date,
-    price,
+    photos,
+    duration,
+    eventStartTime,
+    eventEndTime,
+    cost,
+    offers,
     isFavourite,
   };
 };
