@@ -1,62 +1,48 @@
 import {createSiteMenuTemplate} from './view/menu.js';
 import {createSiteInfoTemplate} from './view/info.js';
-import {createSiteCostTemplate} from './view/cost';
+import {createSiteCostTemplate} from './view/cost.js';
 import {createSiteFilterTemplate} from './view/filter.js';
 import {createSiteSortingTemplate} from './view/sorting.js';
-import {createSiteFormCreationTemplate} from './view/form-creation.js';
 import {createSiteEditFormTemplate} from './view/edit-form.js';
 import {createSiteWaypointTemplate} from './view/waypoint.js';
 import {createSiteInfoAboutTripTemplate} from './view/info-about-trip.js';
 import {createSiteListTemplate} from './view/list.js';
+import {generateTripEventsItem} from './mock/task.js';
+import { allOffers } from './mock/offer';
 
-const TASK_COUNT = 3;
+const EVENTS_COUNT = 20;
+const tripEvents = new Array(EVENTS_COUNT).fill().map(generateTripEventsItem).sort((a, b) => a.eventStartTime - b.eventStartTime);
 
-const position = {
-  BEFORE_BEGIN: 'beforebegin', // до самого element (до открывающего тега)
-  AFTER_BEGIN: 'afterbegin', // сразу после открывающего тега  element (перед первым потомком)
-  BEFORE_END: 'beforeend', // сразу перед закрывающим тегом element (после последнего потомка)
-  AFTER_END: 'afterend', // после element (после закрывающего тега)
-};
+const pageHeaderContainer = document.querySelector('.page-header');
+const headerTripElement = pageHeaderContainer.querySelector('.trip-main');
+const headerTripControls = headerTripElement.querySelector('.trip-controls');
+const pageMainContainer = document.querySelector('.page-main');
+const mainTripEventsContainer = pageMainContainer.querySelector('.trip-events');
 
-// Функция для отображения данных на странице
-const render = (container, template, place = position.BEFORE_END) => {
+const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-// Хедер страницы
-const siteHeaderElement = document.querySelector('.page-header');
-
 // Добавляем шаблон для маршрута и стоимости
-const siteHeaderTripMainElement = siteHeaderElement.querySelector('.trip-main');
-render(siteHeaderTripMainElement, createSiteInfoTemplate(), position.AFTER_BEGIN);
-const siteHeaderInfoElement = siteHeaderElement.querySelector('.trip-info');
-render(siteHeaderInfoElement, createSiteInfoAboutTripTemplate(), position.AFTER_BEGIN);
-render(siteHeaderInfoElement, createSiteCostTemplate());
 
-// Добавляем меню
-const siteHeaderMenuElement = siteHeaderElement.querySelector('.trip-controls__navigation');
-render(siteHeaderMenuElement, createSiteMenuTemplate());
+render(headerTripElement, createSiteInfoTemplate(), 'afterbegin');
+const headerTripInfoContainer = headerTripElement.querySelector('.trip-main__trip-info');
+render(headerTripInfoContainer, createSiteInfoAboutTripTemplate(tripEvents), 'beforeend');
+render(headerTripInfoContainer, createSiteCostTemplate(tripEvents), 'beforeend');
 
-// Добавляем фильтры
-const siteHeaderFilterElement = siteHeaderElement.querySelector('.trip-controls__filters');
-render(siteHeaderFilterElement, createSiteFilterTemplate());
+// Компоненты управления поездкой
 
-// Контент страницы
-const siteMainElement = document.querySelector('.page-main');
-const siteMainEventsElement = siteMainElement.querySelector('.trip-events');
+render(headerTripControls, createSiteMenuTemplate(), 'beforeend');
+render(headerTripControls, createSiteFilterTemplate(), 'beforeend');
 
-// Добавляем сортировку
-render(siteMainEventsElement, createSiteSortingTemplate());
+// Добавляем точки в список
 
-// Добавляем шаблон для точек
-render(siteMainEventsElement, createSiteListTemplate());
-
-//Добавляем точки в список
-const siteMainPointListElement = siteMainEventsElement.querySelector('.trip-events__list');
-for (let i = 0; i < TASK_COUNT; i++) {
-  render(siteMainPointListElement, createSiteWaypointTemplate());
+render(mainTripEventsContainer, createSiteSortingTemplate(), 'beforeend');
+render(mainTripEventsContainer, createSiteListTemplate(), 'beforeend');
+const tripEventsList = mainTripEventsContainer.querySelector('.trip-events__list');
+render(tripEventsList, createSiteEditFormTemplate(tripEvents[0], allOffers), 'beforeend');
+for (let i = 1; i < EVENTS_COUNT; i++) {
+  render(tripEventsList, createSiteWaypointTemplate(tripEvents[i]), 'beforeend');
 }
 
-// Добавляем форму редактирования в начало списка
-render(siteMainPointListElement, createSiteFormCreationTemplate(), position.AFTER_BEGIN);
-render(siteMainPointListElement, createSiteEditFormTemplate(), position.AFTER_BEGIN);
+generateTripEventsItem();
