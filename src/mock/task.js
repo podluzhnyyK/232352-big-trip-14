@@ -1,4 +1,6 @@
 import dayjs from 'dayjs';
+import {eventType} from './consts';
+import {getOfferIds} from './offer';
 
 // Служебные функции
 const getRandomInteger = (a = 0, b = 1) => {
@@ -24,7 +26,18 @@ const getRandomTimeGap = () => {
 // Функции по генерации данных
 
 const generateType = () => {
-  const EVENTS_TYPE = ['Taxi', 'Bus', 'Train', 'Ship', 'Transport', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+  const EVENTS_TYPE = [
+    eventType.Taxi,
+    eventType.Bus,
+    eventType.Train,
+    eventType.Ship,
+    eventType.Transport,
+    eventType.Drive,
+    eventType.Flight,
+    eventType.CheckIn,
+    eventType.Sightseeing,
+    eventType.Restaurant,
+  ];
 
   const randomIndex = getRandomInteger(0, EVENTS_TYPE.length - 1);
   return EVENTS_TYPE[randomIndex];
@@ -64,43 +77,6 @@ const generateEventCost = () => {
   return cost;
 };
 
-const generateOffers = () => {
-  const offers = [
-    {
-      'id': 'luggage',
-      'title': 'Add luggage',
-      'offerCost': 30,
-      'isChecked': Boolean(getRandomInteger(0, 1)),
-    },
-    {
-      'id': 'comfort',
-      'title': 'Switch to comfort',
-      'offerCost': 100,
-      'isChecked': Boolean(getRandomInteger(0, 1)),
-    },
-    {
-      'id': 'meal',
-      'title': 'Add a meal',
-      'offerCost': 15,
-      'isChecked': Boolean(getRandomInteger(0, 1)),
-    },
-    {
-      'id': 'seats',
-      'title': 'Chose seats',
-      'offerCost': 5,
-      'isChecked': Boolean(getRandomInteger(0, 1)),
-    },
-    {
-      'id': 'train',
-      'title': 'Travel by train',
-      'offerCost': 40,
-      'isChecked': Boolean(getRandomInteger(0, 1)),
-    },
-  ];
-
-  return offers;
-};
-
 const randomizeFavouriteFlag = () => {
   return Boolean(getRandomInteger(0, 1));
 };
@@ -127,7 +103,7 @@ export const generateTripEventsItem = () => {
   const duration = getRandomTimeGap();
   const eventEndTime = getEventEndTime(eventStartTime, duration);
   const cost = generateEventCost();
-  const offers = generateOffers();
+  const offers = getOfferIds(type);
   const isFavourite = randomizeFavouriteFlag();
 
   return {

@@ -8,6 +8,7 @@ import {createSiteWaypointTemplate} from './view/waypoint.js';
 import {createSiteInfoAboutTripTemplate} from './view/info-about-trip.js';
 import {createSiteListTemplate} from './view/list.js';
 import {generateTripEventsItem} from './mock/task.js';
+import { allOffers } from './mock/offer';
 
 const EVENTS_COUNT = 20;
 const tripEvents = new Array(EVENTS_COUNT).fill().map(generateTripEventsItem).sort((a, b) => a.eventStartTime - b.eventStartTime);
@@ -39,7 +40,7 @@ render(headerTripControls, createSiteFilterTemplate(), 'beforeend');
 render(mainTripEventsContainer, createSiteSortingTemplate(), 'beforeend');
 render(mainTripEventsContainer, createSiteListTemplate(), 'beforeend');
 const tripEventsList = mainTripEventsContainer.querySelector('.trip-events__list');
-render(tripEventsList, createSiteEditFormTemplate(tripEvents[0]), 'beforeend');
+render(tripEventsList, createSiteEditFormTemplate(tripEvents[0], allOffers), 'beforeend');
 for (let i = 1; i < EVENTS_COUNT; i++) {
   render(tripEventsList, createSiteWaypointTemplate(tripEvents[i]), 'beforeend');
 }
