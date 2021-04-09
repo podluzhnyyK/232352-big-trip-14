@@ -1,4 +1,6 @@
-export const createSiteCostTemplate = (tripEvents) => {
+import {createElement} from '../mock/utils.js';
+
+const createSiteCostTemplate = (tripEvents) => {
   const initialValue = 10;
   const eventsTotalCost = tripEvents.reduce((accumulator, currentValue) => accumulator + currentValue.cost, initialValue);
 
@@ -19,3 +21,25 @@ export const createSiteCostTemplate = (tripEvents) => {
   Total: &euro;&nbsp;<span class="trip-info__cost-value">${tripTotalCost}</span>
 </p>`;
 };
+
+export default class TripCost {
+  constructor(tripEvents) {
+    this._tripEvents = tripEvents;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSiteCostTemplate(this._tripEvents);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

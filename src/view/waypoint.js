@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
+import {createElement} from '../mock/utils.js';
 
-export const createSiteWaypointTemplate = (tripEvent) => {
-
+const createSiteWaypointTemplate = (tripEvent) => {
   const {type, destination, duration, eventStartTime, eventEndTime, cost, offers, isFavourite} = tripEvent;
 
   const parseDuration = () => {
@@ -96,3 +96,25 @@ export const createSiteWaypointTemplate = (tripEvent) => {
   </li>
   `;
 };
+
+export default class TripEventsItem {
+  constructor(tripEvent) {
+    this._tripEvent = tripEvent;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSiteWaypointTemplate(this._tripEvent);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

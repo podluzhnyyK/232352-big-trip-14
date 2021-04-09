@@ -20,3 +20,33 @@ export const getRandomArray = (array) => {
   });
   return arrayList;
 };
+
+export const createElement = (template) => {
+  const newElement = document.createElement('div');
+  newElement.innerHTML = template.trim();
+
+  return newElement.firstChild;
+};
+
+export const createMultipleElements = (template) => {
+  const newElement = document.createElement('div');
+  newElement.innerHTML = template.trim();
+
+  return newElement;
+};
+
+export const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+};
+
+export const render = (container, element, position) => {
+  switch (position) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
