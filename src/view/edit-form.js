@@ -163,12 +163,14 @@ export const createSiteEditFormTemplate = (tripEvent, allOffers) => {
 };
 
 export default class TripEventsAddForm {
-  constructor() {
+  constructor(tripEvents, allOffers) {
+    this._tripEvents = tripEvents;
+    this._allOffers = allOffers;
     this._element = null;
   }
 
   getTemplate() {
-    return createSiteEditFormTemplate();
+    return createSiteEditFormTemplate(this._tripEvents, this._allOffers);
   }
 
   getElement() {
