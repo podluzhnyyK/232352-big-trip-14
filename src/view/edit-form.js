@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-
+import {createElement} from '../mock/utils.js';
 
 export const createSiteEditFormTemplate = (tripEvent, allOffers) => {
 
@@ -161,3 +161,26 @@ export const createSiteEditFormTemplate = (tripEvent, allOffers) => {
 </li>
   `;
 };
+
+export default class TripEventsAddForm {
+  constructor(tripEvents, allOffers) {
+    this._tripEvents = tripEvents;
+    this._allOffers = allOffers;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSiteEditFormTemplate(this._tripEvents, this._allOffers);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
