@@ -1,4 +1,4 @@
-import {createElement} from '../mock/utils.js';
+import {createElement} from '../utils.js';
 
 const createSiteSortingTemplate = () => {
   return `
