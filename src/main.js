@@ -32,6 +32,7 @@ const renderTripEvent = (eventsListElement, tripEvent) => {
 
   const replaceEditFormToCard = () => {
     eventsListElement.replaceChild(tripEventComponent.getElement(), tripEventEditComponent.getElement());
+    document.removeEventListener('keydown', onDocumentEscapePress);
   };
 
   const onEventCardRollupButtonClick = () => {
@@ -50,7 +51,6 @@ const renderTripEvent = (eventsListElement, tripEvent) => {
   const onDocumentEscapePress = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       replaceEditFormToCard();
-      document.removeEventListener('keydown', onDocumentEscapePress);
     }
   };
 
@@ -68,10 +68,10 @@ const renderOverallTripInfo = () => {
   render(headerTripInfoContainer, new TripCostView(tripEvents).getElement(), RenderPosition.BEFOREEND);
 };
 
-const renderTripControls = () => {
-  render(headerTripControls, new TripMenuView().getElement(), RenderPosition.BEFOREEND);
-  render(headerTripControls, new TripEventsFiltersView().getElement(), RenderPosition.BEFOREEND);
-};
+
+render(headerTripControls, new TripMenuView().getElement(), RenderPosition.BEFOREEND);
+render(headerTripControls, new TripEventsFiltersView().getElement(), RenderPosition.BEFOREEND);
+
 
 const renderTripEvents = () => {
   const tripEventsListComponent = new TripEventsListView();
@@ -82,9 +82,7 @@ const renderTripEvents = () => {
 
 if (tripEvents.length > 0) {
   renderOverallTripInfo();
-  renderTripControls();
   renderTripEvents();
 } else {
-  renderTripControls();
   render(mainTripEventsContainer, new TripEventsEmptyListView().getElement(), RenderPosition.BEFOREEND);
 }
