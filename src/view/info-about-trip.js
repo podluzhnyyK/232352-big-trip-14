@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../mock/utils.js';
+import {createElement} from '../utils.js';
 
 const createSiteInfoAboutTripTemplate = (tripEvents) => {
 

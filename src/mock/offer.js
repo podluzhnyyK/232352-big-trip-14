@@ -1,5 +1,5 @@
 import {eventType} from './consts';
-import {getRandomInteger} from './utils';
+import {getRandomInteger} from '../utils.js';
 
 
 const offersByType = {

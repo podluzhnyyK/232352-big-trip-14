@@ -1,4 +1,4 @@
-import {createMultipleElements} from '../mock/utils.js';
+import {createMultipleElements} from '../utils.js';
 
 const createSiteMenuTemplate = () => {
   return `
