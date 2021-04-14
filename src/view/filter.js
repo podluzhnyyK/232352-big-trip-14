@@ -1,4 +1,5 @@
-import {createMultipleElements} from '../utils.js';
+import AbstractView from './abstract.js';
+import {createMultipleElements} from '../utils/render.js';
 
 const createSiteFilterTemplate = () => {
   return `
@@ -21,11 +22,7 @@ const createSiteFilterTemplate = () => {
     `;
 };
 
-export default class TripEventsFilters {
-  constructor() {
-    this._element = null;
-  }
-
+export default class TripEventsFilters extends AbstractView {
   getTemplate() {
     return createSiteFilterTemplate();
   }
@@ -35,9 +32,5 @@ export default class TripEventsFilters {
       this._element = createMultipleElements(this.getTemplate());
     }
     return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 export const createSiteEditFormTemplate = (tripEvent, allOffers) => {
 
@@ -162,25 +162,35 @@ export const createSiteEditFormTemplate = (tripEvent, allOffers) => {
   `;
 };
 
-export default class TripEventsAddForm {
+export default class TripEventsEditForm extends AbstractView {
   constructor(tripEvents, allOffers) {
+    super();
     this._tripEvents = tripEvents;
     this._allOffers = allOffers;
-    this._element = null;
+    this._editClickHandler = this._editClickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createSiteEditFormTemplate(this._tripEvents, this._allOffers);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  _editClickHandler() {
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }
