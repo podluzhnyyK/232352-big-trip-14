@@ -1,6 +1,7 @@
-import {createMultipleElements} from '../utils.js';
+import {createMultipleElements} from '../utils/render.js';
+import AbstractView from './abstract.js';
 
-const createSiteMenuTemplate = () => {
+const createTripMenuTemplate = () => {
   return `
   <h2 class="visually-hidden">Switch trip view</h2>
   <nav class="trip-controls__trip-tabs  trip-tabs">
@@ -9,13 +10,9 @@ const createSiteMenuTemplate = () => {
   </nav>`;
 };
 
-export default class TripMenu {
-  constructor() {
-    this._element = null;
-  }
-
+export default class TripMenu extends AbstractView {
   getTemplate() {
-    return createSiteMenuTemplate();
+    return createTripMenuTemplate();
   }
 
   getElement() {
@@ -23,9 +20,5 @@ export default class TripMenu {
       this._element = createMultipleElements(this.getTemplate());
     }
     return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
