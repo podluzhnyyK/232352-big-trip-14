@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import {eventType} from './consts';
 import {getOfferIds} from './offer';
 import {getRandomInteger, shuffleArray} from '../utils/common.js';
+import {nanoid} from 'nanoid';
 
 const getRandomTimeGap = () => {
   return getRandomInteger(30, 360);
@@ -89,6 +90,7 @@ export const generateTripEventsItem = () => {
   const cost = generateEventCost();
   const offers = getOfferIds(type);
   const isFavourite = randomizeFavouriteFlag();
+  const id = nanoid();
 
   return {
     type,
@@ -101,5 +103,6 @@ export const generateTripEventsItem = () => {
     cost,
     offers,
     isFavourite,
+    id,
   };
 };
