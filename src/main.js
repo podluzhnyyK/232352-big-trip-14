@@ -1,93 +1,127 @@
-import TripMenuView from './view/menu.js';
-import TripSectionView from './view/info.js';
-import TripCostView from './view/cost.js';
-import TripEventsFiltersView from './view/filter.js';
-//import TripEventsSortView from './view/sorting.js';
-//import TripEventsEditFormView from './view/edit-form.js';
-//import TripEventsItemView from './view/waypoint.js';
-import TripInfoView from './view/info-about-trip.js';
-//import TripEventsListView from './view/list.js';
-import TripEventsEmptyListView from './view/events-empty-list.js';
-import {generateTripEventsItem} from './mock/task.js';
-//import { allOffers } from './mock/offer';
-import {render, RenderPosition} from './utils/render.js';
-import TripPresenter from './presenter/trip.js';
+import SiteNavigationView from './view/site-navigation.js';
+import { remove, render, RenderPosition } from './utils/render.js';
+import BoardPresenter from './presenter/trip.js';
+import PointsModel from './model/points.js';
+import FilterModel from './model/filter.js';
+import FilterPresenter from './presenter/filter.js';
+import { CONNECTION_OFFLINE, FilterType, MenuItem, UpdateType } from './utils/const.js';
+import StatisticsView from './view/statistics.js';
+import Api from './api/api.js';
+import PointStore from './store.js';
+import TripInfoPresenter from './presenter/trip-info.js';
+import Store from './api/store.js';
+import Provider from './api/provider.js';
+import { isOnline } from './utils/common.js';
+import { getToast } from './utils/toast.js';
 
-const EVENTS_COUNT = 20;
-const tripEvents = new Array(EVENTS_COUNT).fill().map(generateTripEventsItem).sort((a, b) => a.eventStartTime - b.eventStartTime);
+const AUTHORIZATION = 'Basic aW22parabellum424';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+const STORE_PREFIX = 'bigtrip-localstorage';
+const STORE_VER = 'v14';
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
+const pointStore = new PointStore();
+const api = new Api(END_POINT, AUTHORIZATION, pointStore);
+const appStore = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, appStore);
+
+let statisticComonent = null;
+
+const siteHeaderElement = document.querySelector('.page-header');
+const siteMenuComponent = new SiteNavigationView();
+const tripMainElement = siteHeaderElement.querySelector('.trip-main');
+const siteNavigationElement = siteHeaderElement.querySelector('.trip-controls__navigation');
+const filterElement = siteHeaderElement.querySelector('.trip-controls__filters');
+const siteMainElement = document.querySelector('.page-main');
+const bodyContainerElement = siteMainElement.querySelector('.page-body__container');
+const boardContainerElement = siteMainElement.querySelector('.trip-events');
+const addNewPointButton = document.querySelector('.trip-main__event-add-btn');
+
+const pointsModel = new PointsModel();
+const filterModel = new FilterModel();
+
+const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
+const boardPresenter = new BoardPresenter(boardContainerElement, pointsModel, filterModel, apiWithProvider, pointStore);
+const tripInfoPresenter = new TripInfoPresenter(tripMainElement, pointsModel);
 
 
-const pageHeaderContainer = document.querySelector('.page-header');
-const headerTripElement = pageHeaderContainer.querySelector('.trip-main');
-const headerTripControls = headerTripElement.querySelector('.trip-controls');
-const pageMainContainer = document.querySelector('.page-main');
-const mainTripEventsContainer = pageMainContainer.querySelector('.trip-events');
-
-// const renderTripEvent = (eventsListElement, tripEvent) => {
-
-//   const tripEventComponent = new TripEventsItemView(tripEvent);
-//   const tripEventEditComponent = new TripEventsEditFormView(tripEvent, allOffers);
-//   const replaceCardToEditForm = () => {
-//     replace(tripEventEditComponent, tripEventComponent);
-//     document.addEventListener('keydown', onDocumentEscapePress);
-//   };
-
-//   const replaceEditFormToCard = () => {
-//     replace(tripEventComponent, tripEventEditComponent);
-//   };
-
-//   const onEventCardRollupButtonClick = () => {
-//     replaceCardToEditForm();
-//   };
-
-//   const onEventEditFormRollupButtonClick = () => {
-//     replaceEditFormToCard();
-//   };
-
-//   const onEventEditFormSubmit = () => {
-//     replaceEditFormToCard();
-//   };
-
-//   const onDocumentEscapePress = (evt) => {
-//     if (evt.key === 'Escape' || evt.key === 'Esc') {
-//       replaceEditFormToCard();
-//       document.removeEventListener('keydown', onDocumentEscapePress);
-//     }
-//   };
-
-//   tripEventComponent.setClickHandler(onEventCardRollupButtonClick);
-//   tripEventEditComponent.setEditClickHandler(onEventEditFormRollupButtonClick);
-//   tripEventEditComponent.setFormSubmitHandler(onEventEditFormSubmit);
-
-//   render(eventsListElement, tripEventComponent, RenderPosition.BEFOREEND);
-// };
-
-const renderOverallTripInfo = () => {
-  render(headerTripElement, new TripSectionView(), RenderPosition.AFTERBEGIN);
-  const headerTripInfoContainer = headerTripElement.querySelector('.trip-main__trip-info');
-  render(headerTripInfoContainer, new TripInfoView(tripEvents), RenderPosition.BEFOREEND);
-  render(headerTripInfoContainer, new TripCostView(tripEvents), RenderPosition.BEFOREEND);
+const handlePointNewFormClose = () => {
+  siteMenuComponent.setMenuItem(MenuItem.TABLE);
+  addNewPointButton.removeAttribute('disabled');
 };
 
-const renderTripControls = () => {
-  render(headerTripControls, new TripMenuView(), RenderPosition.BEFOREEND);
-  render(headerTripControls, new TripEventsFiltersView(), RenderPosition.BEFOREEND);
+const handleSiteMenuClick = (menuItem) => {
+  switch (menuItem) {
+    case MenuItem.TABLE:
+      remove(statisticComonent);
+      boardPresenter.destroy();
+      filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+      siteMenuComponent.setMenuItem(MenuItem.TABLE);
+      boardPresenter.init();
+      break;
+    case MenuItem.STATS:
+      remove(statisticComonent);
+      statisticComonent = new StatisticsView(pointsModel.getPoints());
+      render(bodyContainerElement, statisticComonent, RenderPosition.BEFOREEND);
+      siteMenuComponent.setMenuItem(MenuItem.STATS);
+      boardPresenter.destroy();
+      break;
+  }
 };
 
-// const renderTripEvents = () => {
-//   const tripEventsListComponent = new TripEventsListView();
-//   render(mainTripEventsContainer, new TripEventsSortView(), RenderPosition.BEFOREEND);
-//   render(mainTripEventsContainer, tripEventsListComponent, RenderPosition.BEFOREEND);
-//   tripEvents.forEach((tripEvent) => renderTripEvent(tripEventsListComponent, tripEvent));
-// };
 
-const tripPresenter = new TripPresenter(mainTripEventsContainer);
+filterPresenter.init();
+boardPresenter.init();
+tripInfoPresenter.init();
 
-renderTripControls();
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  remove(statisticComonent);
+  boardPresenter.destroy();
+  filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+  boardPresenter.init();
+  if (!isOnline()) {
+    getToast('You can\'t create new points offline');
+    return;
+  }
+  boardPresenter.createPoint(handlePointNewFormClose);
+  addNewPointButton.setAttribute('disabled', 'disabled');
+});
 
-if (tripEvents.length > 0) {
-  renderOverallTripInfo();
-  tripPresenter.init(tripEvents);
-} else {
-  render(mainTripEventsContainer, new TripEventsEmptyListView(), RenderPosition.BEFOREEND);
-}
+apiWithProvider
+  .getAllData()
+  .then((points) => {
+    pointsModel.setPoints(UpdateType.INIT, points);
+
+    render(siteNavigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+    render(siteNavigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  });
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
+
+window.addEventListener('online', () => {
+  document.title = document.title.replace(CONNECTION_OFFLINE, '');
+  apiWithProvider.sync();
+  addNewPointButton.removeAttribute('disabled');
+
+  if (pointStore._offers.length === 0) {
+    apiWithProvider.getAddData().then(() => {
+      boardPresenter.destroy();
+      boardPresenter.init();
+    });
+  }
+});
+
+window.addEventListener('offline', () => {
+  getToast('Connection lost');
+  addNewPointButton.setAttribute('disabled', 'disabled');
+  document.title += CONNECTION_OFFLINE;
+});
