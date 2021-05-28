@@ -1,15 +1,15 @@
-import { FilterType } from '../utils/const.js';
+import { FilterPick } from '../utils/const.js';
 import Observer from '../utils/observer.js';
 
 export default class Filter extends Observer {
   constructor() {
     super();
-    this._activeFilter = FilterType.EVERYTHING;
+    this._activeFilter = FilterPick.EVERYTHING;
   }
 
-  setFilter(UpdateType, filter) {
+  setFilter(UpdatePick, filter) {
     this._activeFilter = filter;
-    this._notify(UpdateType, filter);
+    this._notify(UpdatePick, filter);
   }
 
   getFilter() {

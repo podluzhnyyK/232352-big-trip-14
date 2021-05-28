@@ -4,7 +4,7 @@ import BoardPresenter from './presenter/trip.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
 import FilterPresenter from './presenter/filter.js';
-import { CONNECTION_OFFLINE, FilterType, MenuItem, UpdateType } from './utils/const.js';
+import { CONNECTION_OFFLINE, FilterPick, MenuItem, UpdatePick } from './utils/const.js';
 import StatisticsView from './view/statistics.js';
 import Api from './api/api.js';
 import PointStore from './store.js';
@@ -55,7 +55,7 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.TABLE:
       remove(statisticComonent);
       boardPresenter.destroy();
-      filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+      filterModel.setFilter(UpdatePick.MAJOR, FilterPick.EVERYTHING);
       siteMenuComponent.setMenuItem(MenuItem.TABLE);
       boardPresenter.init();
       break;
@@ -78,7 +78,7 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
   evt.preventDefault();
   remove(statisticComonent);
   boardPresenter.destroy();
-  filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+  filterModel.setFilter(UpdatePick.MAJOR, FilterPick.EVERYTHING);
   boardPresenter.init();
   if (!isOnline()) {
     getToast('You can\'t create new points offline');
@@ -91,14 +91,14 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
 apiWithProvider
   .getAllData()
   .then((points) => {
-    pointsModel.setPoints(UpdateType.INIT, points);
+    pointsModel.setPoints(UpdatePick.INIT, points);
 
     render(siteNavigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
   })
   .catch(() => {
-    pointsModel.setPoints(UpdateType.INIT, []);
+    pointsModel.setPoints(UpdatePick.INIT, []);
     render(siteNavigationElement, siteMenuComponent, RenderPosition.BEFOREEND);
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   });

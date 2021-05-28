@@ -34,14 +34,14 @@ const UserAction = {
   DELETE_POINT: 'DELETE_POINT',
 };
 
-const UpdateType = {
+const UpdatePick = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   INIT: 'INIT',
 };
 
-const FilterType = {
+const FilterPick = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PAST: 'past',
@@ -93,8 +93,8 @@ export {
   KeyCode,
   FLATPICKR_SETTINGS,
   UserAction,
-  UpdateType,
-  FilterType,
+  UpdatePick,
+  FilterPick,
   DEFAULT_POINT,
   MenuItem,
   CONNECTION_OFFLINE,
