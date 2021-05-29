@@ -25,7 +25,7 @@ const KeyCode = {
 const FLATPICKR_SETTINGS = {
   enableTime: true,
   dateFormat: 'd/m/y H:i',
-  time_24hr: true,
+  timeDay: true,
 };
 
 const UserAction = {
